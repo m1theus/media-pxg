@@ -38,12 +38,19 @@ export default function PokemonSearch() {
     if (!searchQuery) {
       setFilteredPokemons(pokemons);
     } else {
-      const filtered = pokemons.filter((pokemon) =>
-        pokemon.nome.toLowerCase().includes(searchQuery.toLowerCase())
-      );
-      setFilteredPokemons(filtered);
+      const q = +searchQuery;
+      if (!Number.isNaN(q) && typeof q === "number") {
+        const filtered = pokemons.filter((pokemon) => +pokemon.level === q);
+        setFilteredPokemons(filtered);
+      } else {
+        const filtered = pokemons.filter((pokemon) =>
+          pokemon.nome.toLowerCase().includes(searchQuery.toLowerCase())
+        );
+        setFilteredPokemons(filtered);
+      }
     }
   }, [searchQuery, pokemons]);
+
   return (
     <div className="container mx-auto p-4 max-w-6xl">
       <div className="flex justify-between items-center mb-8">
@@ -81,6 +88,7 @@ export default function PokemonSearch() {
                 <CardContent className="flex flex-col items-center">
                   <div className="relative w-48 h-48 bg-black mb-2">
                     <Image
+                      priority
                       src={`/images/pokemons/${pokemon.numero}.png`}
                       alt={pokemon.nome}
                       fill
