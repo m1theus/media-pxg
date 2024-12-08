@@ -195,7 +195,7 @@ export default function PokemonSearch() {
                 <CardContent className="flex flex-col items-center">
                   <div className="relative w-48 h-48 bg-black mb-2">
                     <Image
-                      src={`/images/${pokemon.nome}.png`}
+                      src={`/images/${pokemon.nome.toLocaleLowerCase()}.png`}
                       alt={pokemon.nome}
                       fill
                       className="object-contain"
