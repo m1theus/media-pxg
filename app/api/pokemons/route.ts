@@ -1,5 +1,5 @@
-import { Pokemon } from "@/app/page";
 import { PokeAPI } from "@/lib/types/pokeapi.dto";
+import { Pokemon } from "@/lib/types/pokemon.dto";
 import { NextResponse } from "next/server";
 import { readFileSync } from "node:fs";
 import path from "node:path";
