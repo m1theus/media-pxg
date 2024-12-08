@@ -16,6 +16,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 
 export interface Pokemon {
   nome: string;
+  image: string;
   numero: number;
   level: number;
   ball1: string;
@@ -151,33 +152,6 @@ export default function PokemonSearch() {
         </Button>
       </div>
 
-      {/* <div className="mb-8">
-        <Pagination>
-          <PaginationContent>
-            <PaginationItem>
-              <PaginationPrevious href="#" />
-            </PaginationItem>
-            <PaginationItem>
-              <PaginationLink href="#" isActive>
-                1
-              </PaginationLink>
-            </PaginationItem>
-            <PaginationItem>
-              <PaginationLink href="#">2</PaginationLink>
-            </PaginationItem>
-            <PaginationItem>
-              <PaginationLink href="#">3</PaginationLink>
-            </PaginationItem>
-            <PaginationItem>
-              <PaginationLink href="#">4</PaginationLink>
-            </PaginationItem>
-            <PaginationItem>
-              <PaginationNext href="#" />
-            </PaginationItem>
-          </PaginationContent>
-        </Pagination>
-      </div> */}
-
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {!filteredPokemons || filteredPokemons.length == 0
           ? Array.from({ length: 6 }).map((_, index) => (
@@ -195,7 +169,7 @@ export default function PokemonSearch() {
                 <CardContent className="flex flex-col items-center">
                   <div className="relative w-48 h-48 bg-black mb-2">
                     <Image
-                      src={`/images/${pokemon.nome.toLocaleLowerCase()}.png`}
+                      src={`/images/pokemons/${pokemon.numero}.png`}
                       alt={pokemon.nome}
                       fill
                       className="object-contain"
@@ -204,9 +178,6 @@ export default function PokemonSearch() {
                   <p className="text-lg">Level: {pokemon.level}</p>
                 </CardContent>
                 <CardFooter className="flex flex-col items-start">
-                  <h3 className="text-sm font-semibold mb-2">
-                    Catch Averages:
-                  </h3>
                   <div className="grid grid-cols-3 gap-2 w-full">
                     {ballTypes?.map((ballType) => (
                       <div
