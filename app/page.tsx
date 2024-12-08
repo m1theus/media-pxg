@@ -1,4 +1,3 @@
-/* eslint-disable @next/next/no-img-element */
 "use client";
 
 import { useEffect, useState } from "react";
@@ -215,13 +214,11 @@ export default function PokemonSearch() {
                         className="flex items-center justify-between"
                       >
                         <div className="flex items-center">
-                          <img
+                          <Image
                             src={`/images/balls/${ballImages[ballType]}`}
                             alt={ballNames[ballType]}
                             width={32}
                             height={32}
-                            // className="mr-1"
-                            // fill
                             className="object-contain"
                           />
                           <span className="text-xs">{pokemon[ballType]}</span>
