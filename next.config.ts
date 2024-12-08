@@ -15,6 +15,18 @@ const nextConfig: NextConfig = {
         port: "",
         pathname: "/*/**",
       },
+      {
+        protocol: "https",
+        hostname: "vercel.app",
+        port: "",
+        pathname: "/*/**",
+      },
+      {
+        protocol: "https",
+        hostname: "media-pxg.vercel.app",
+        port: "",
+        pathname: "/*/**",
+      },
     ],
   },
   output: "standalone",
