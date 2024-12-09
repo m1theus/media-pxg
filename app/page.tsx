@@ -41,7 +41,8 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import Link from "next/link";
-import { MapPin } from "lucide-react";
+import { AlertCircle, Github, MapPin } from "lucide-react";
+import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
 
 function useDebounce<T>(value: T, delay: number): T {
   const [debouncedValue, setDebouncedValue] = useState(value);
@@ -142,9 +143,26 @@ export default function PokemonSearch() {
 
   return (
     <div className="container mx-auto p-4 max-w-6xl">
+      <Alert variant="destructive" className="mb-8">
+        <AlertCircle className="h-4 w-4" />
+        <AlertTitle>Warning</AlertTitle>
+        <AlertDescription>
+          These catch averages might be outdated! If you&apos;d like to
+          contribute with more up-to-date information, please open an issue or
+          pull request at the following{" "}
+          <Link target="_blank" href="https://github.com/m1theus/media-pxg">
+            link
+          </Link>
+        </AlertDescription>
+      </Alert>
       <div className="flex justify-between items-center mb-8">
         <h1 className="text-2xl font-bold">PxG Catch Average</h1>
-        <ThemeToggle />
+        <div className="flex items-center space-x-4">
+          <ThemeToggle />
+          <Link target="_blank" href="https://github.com/m1theus/media-pxg">
+            <Github />
+          </Link>
+        </div>
       </div>
 
       <div className="flex gap-4 mb-8">
