@@ -127,7 +127,7 @@ export default function PokemonSearch() {
 
   const totalPages = Math.ceil(filteredPokemons.length / Number(itemsPerPage));
 
-  function getMapas(mapas: string) {
+  function getMap(mapas: string) {
     const m = mapas.split(";");
     const captions = m.map((i) => {
       if (`{${i}}` === "{no}") return "#";
@@ -214,17 +214,17 @@ export default function PokemonSearch() {
                 <CardHeader>
                   <CardTitle className="text-center">
                     {pokemon.nome}
-                    {getMapas(pokemon.mapas) === "#" ? (
+                    {getMap(pokemon.mapas) === "#" ? (
                       <></>
                     ) : (
                       <Link
                         target={
-                          getMapas(pokemon.mapas) === "#" ? "_self" : "_blank"
+                          getMap(pokemon.mapas) === "#" ? "_self" : "_blank"
                         }
                         href={
-                          getMapas(pokemon.mapas) === "#"
+                          getMap(pokemon.mapas) === "#"
                             ? "#"
-                            : `/mapa?captions=${getMapas(pokemon.mapas)}`
+                            : `/maps?captions=${getMap(pokemon.mapas)}`
                         }
                       >
                         <MapPin />

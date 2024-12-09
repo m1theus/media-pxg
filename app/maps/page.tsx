@@ -4,7 +4,11 @@ import { useSearchParams } from "next/navigation";
 import Image from "next/image";
 import mapa from "../../public/mapa-pxg.jpg";
 
-export function ImageWithMarkers({ captions }: { captions: [] }) {
+export default function MapPage() {
+  const searchParams = useSearchParams();
+  const json = searchParams.get("captions") ?? "";
+  const { captions } = JSON.parse(json) ?? [];
+
   useEffect(() => {
     const addMarkers = () => {
       const target = document.getElementById("image-wrapper");
@@ -39,17 +43,6 @@ export function ImageWithMarkers({ captions }: { captions: [] }) {
         priority
         style={{ width: "100%", height: "auto" }}
       />
-    </div>
-  );
-}
-
-export default function MapPage() {
-  const searchParams = useSearchParams();
-  const json = searchParams.get("captions") ?? "";
-  const { captions } = JSON.parse(json) ?? [];
-  return (
-    <div>
-      <ImageWithMarkers captions={captions} />
     </div>
   );
 }
