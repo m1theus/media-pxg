@@ -19,6 +19,12 @@ import {
   ballTypes,
   Pokemon,
 } from "@/lib/types/pokemon.dto";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 export default function PokemonSearch() {
   const [searchQuery, setSearchQuery] = useState("");
@@ -86,7 +92,7 @@ export default function PokemonSearch() {
                   <CardTitle className="text-center">{pokemon.nome}</CardTitle>
                 </CardHeader>
                 <CardContent className="flex flex-col items-center">
-                  <div className="relative w-48 h-48 bg-black mb-2">
+                  <div className="relative w-64 h-64 mb-2">
                     <Image
                       priority
                       src={`/images/pokemons/${pokemon.numero}.png`}
@@ -104,16 +110,32 @@ export default function PokemonSearch() {
                         key={ballType}
                         className="flex items-center justify-between"
                       >
-                        <div className="flex items-center">
-                          <Image
-                            src={`/images/balls/${ballImages[ballType]}`}
-                            alt={ballNames[ballType]}
-                            width={32}
-                            height={32}
-                            className="object-contain"
-                          />
-                          <span className="text-xs">{pokemon[ballType]}</span>
-                        </div>
+                        <TooltipProvider>
+                          <Tooltip>
+                            <TooltipTrigger>
+                              <div
+                                className="flex items-center"
+                                aria-label={ballNames[ballType]}
+                              >
+                                <Image
+                                  src={`/images/balls/${ballImages[ballType]}`}
+                                  alt={ballNames[ballType]}
+                                  width={32}
+                                  height={32}
+                                  className="object-contain"
+                                />
+                                <span className="text-xs">
+                                  {pokemon[ballType]}
+                                </span>
+                              </div>
+                            </TooltipTrigger>
+                            <TooltipContent>
+                              <p>
+                                {ballNames[ballType]} - {pokemon[ballType]}
+                              </p>
+                            </TooltipContent>
+                          </Tooltip>
+                        </TooltipProvider>
                       </div>
                     ))}
                   </div>
