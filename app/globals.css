@@ -70,3 +70,42 @@ body {
     @apply bg-background text-foreground;
   }
 }
+
+/* global.css or specific component CSS file */
+.marker {
+  position: absolute;
+  font-size: 16px;
+  color: red;
+  font-weight: bold;
+}
+
+.marker .caption {
+  position: absolute;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: rgba(0, 0, 0, 0.7);
+  color: white;
+  padding: 5px;
+  border-radius: 5px;
+}
+
+.marker:hover .caption {
+  display: block;
+}
+
+.blink-eff {
+  animation: blink 1s infinite;
+}
+
+@keyframes blink {
+  0% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}

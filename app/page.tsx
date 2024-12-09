@@ -40,6 +40,8 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import Link from "next/link";
+import { MapPin } from "lucide-react";
 
 function useDebounce<T>(value: T, delay: number): T {
   const [debouncedValue, setDebouncedValue] = useState(value);
@@ -125,6 +127,19 @@ export default function PokemonSearch() {
 
   const totalPages = Math.ceil(filteredPokemons.length / Number(itemsPerPage));
 
+  function getMapas(mapas: string) {
+    const m = mapas.split(";");
+    const captions = m.map((i) => {
+      if (`{${i}}` === "{no}") return "#";
+      return `{${i}}`;
+    });
+
+    if (captions.length > 1) {
+      return JSON.stringify({ captions });
+    }
+    return captions[0] === "#" ? "#" : JSON.stringify({ captions });
+  }
+
   return (
     <div className="container mx-auto p-4 max-w-6xl">
       <div className="flex justify-between items-center mb-8">
@@ -197,7 +212,25 @@ export default function PokemonSearch() {
           : paginatedPokemons?.map((pokemon, index) => (
               <Card key={index} className="border-2">
                 <CardHeader>
-                  <CardTitle className="text-center">{pokemon.nome}</CardTitle>
+                  <CardTitle className="text-center">
+                    {pokemon.nome}
+                    {getMapas(pokemon.mapas) === "#" ? (
+                      <></>
+                    ) : (
+                      <Link
+                        target={
+                          getMapas(pokemon.mapas) === "#" ? "_self" : "_blank"
+                        }
+                        href={
+                          getMapas(pokemon.mapas) === "#"
+                            ? "#"
+                            : `/mapa?captions=${getMapas(pokemon.mapas)}`
+                        }
+                      >
+                        <MapPin />
+                      </Link>
+                    )}
+                  </CardTitle>
                 </CardHeader>
                 <CardContent className="flex flex-col items-center">
                   <div className="relative w-64 h-64 mb-2">
