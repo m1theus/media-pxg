@@ -61,7 +61,7 @@ export default function PokemonSearch() {
   const debouncedSearchQuery = useDebounce(searchQuery, 300);
 
   const [currentPage, setCurrentPage] = useState(1);
-  const [itemsPerPage, setItemsPerPage] = useState("3");
+  const [itemsPerPage, setItemsPerPage] = useState("50");
 
   useEffect(() => {
     async function fetchPokemons() {
