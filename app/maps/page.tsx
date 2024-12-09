@@ -1,10 +1,10 @@
 "use client";
-import { useEffect } from "react";
+import { useEffect, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import Image from "next/image";
 import mapa from "../../public/mapa-pxg.jpg";
 
-export default function MapPage() {
+function MapWithMarks() {
   const searchParams = useSearchParams();
   const json = searchParams.get("captions") ?? "";
   const { captions } = JSON.parse(json) ?? [];
@@ -44,5 +44,13 @@ export default function MapPage() {
         style={{ width: "100%", height: "auto" }}
       />
     </div>
+  );
+}
+
+export default function MapPage() {
+  return (
+    <Suspense>
+      <MapWithMarks />
+    </Suspense>
   );
 }
