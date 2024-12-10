@@ -43,6 +43,7 @@ import {
 import Link from "next/link";
 import { AlertCircle, Github, MapPin } from "lucide-react";
 import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
+import IframeModal from "@/components/iframe-modal";
 
 function useDebounce<T>(value: T, delay: number): T {
   const [debouncedValue, setDebouncedValue] = useState(value);
@@ -230,6 +231,12 @@ export default function PokemonSearch() {
           : paginatedPokemons?.map((pokemon, index) => (
               <Card key={index} className="border-2">
                 <CardHeader>
+                  <div className="text-center m-5">
+                    <IframeModal
+                      pokemon={pokemon.nome}
+                      url={`https://wiki.pokexgames.com/index.php/${pokemon.nome}`}
+                    />
+                  </div>
                   <CardTitle className="text-center">
                     {pokemon.nome}
                     {getMap(pokemon.mapas) === "#" ? (
