@@ -1,0 +1,9 @@
+# *
+User-agent: *
+Allow: /
+
+# Host
+Host: https://media-pxg.vercel.app/
+
+# Sitemaps
+Sitemap: https://media-pxg.vercel.app/sitemap.xml

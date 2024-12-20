@@ -1,5 +1,7 @@
 "use client";
 
+import Head from "next/head";
+
 import { useState, useEffect, useMemo } from "react";
 import {
   Pagination,
@@ -199,211 +201,256 @@ export default function PokemonSearch() {
   }
 
   return (
-    <div className="container mx-auto p-4 max-w-6xl">
-      <Alert variant="destructive" className="mb-8">
-        <AlertCircle className="h-4 w-4" />
-        <AlertTitle>Warning</AlertTitle>
-        <AlertDescription>
-          These catch averages might be outdated! If you&apos;d like to
-          contribute with more up-to-date information, please open an issue or
-          pull request at the following{" "}
-          <Link target="_blank" href="https://github.com/m1theus/media-pxg">
-            link
-          </Link>
-        </AlertDescription>
-      </Alert>
-      <div className="flex justify-between items-center mb-8">
-        <h1 className="text-2xl font-bold">PxG Catch Average</h1>
-        <div className="flex items-center space-x-4">
-          <ThemeToggle />
-          <Link target="_blank" href="https://github.com/m1theus/media-pxg">
-            <Github />
-          </Link>
+    <>
+      <Head>
+        <title>PxG Catch Average - Pokemon Search</title>
+        <meta
+          name="description"
+          content="Discover catch averages, levels, prices, and more for Pokemon in PxG (PokeXGames)!"
+        />
+        <meta
+          name="keywords"
+          content="PxG, Pokemon, Catch Average, Levels, Prices, PokeXGames, Media Ball PXG, Media PXG"
+        />
+        <meta name="author" content="https://media-pxg.vercel.app" />
+        <meta
+          property="og:title"
+          content="PxG Catch Average - Pokemon Search"
+        />
+        <meta
+          property="og:description"
+          content="Discover catch averages, levels, prices, and more for Pokemon in PxG (PokeXGames)!"
+        />
+        <meta property="og:url" content="https://media-pxg.vercel.app" />
+        <meta property="og:type" content="website" />
+        <meta
+          property="og:image"
+          content="https://media-pxg.vercel.app/banner.png"
+        />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta
+          name="twitter:title"
+          content="PxG Catch Average - Pokemon Search"
+        />
+        <meta
+          name="twitter:description"
+          content="Discover catch averages, levels, prices, and more for Pokemon in PxG!"
+        />
+        <meta
+          name="twitter:image"
+          content="https://media-pxg.vercel.app/banner.png"
+        />
+        <link rel="canonical" href="https://media-pxg.vercel.app" />
+      </Head>
+
+      <div className="container mx-auto p-4 max-w-6xl">
+        <Alert variant="destructive" className="mb-8">
+          <AlertCircle className="h-4 w-4" />
+          <AlertTitle>Warning</AlertTitle>
+          <AlertDescription>
+            These catch averages might be outdated! If you&apos;d like to
+            contribute with more up-to-date information, please open an issue or
+            pull request at the following{" "}
+            <Link target="_blank" href="https://github.com/m1theus/media-pxg">
+              link
+            </Link>
+          </AlertDescription>
+        </Alert>
+        <div className="flex justify-between items-center mb-8">
+          <h1 className="text-2xl font-bold">PxG Catch Average</h1>
+          <div className="flex items-center space-x-4">
+            <ThemeToggle />
+            <Link target="_blank" href="https://github.com/m1theus/media-pxg">
+              <Github />
+            </Link>
+          </div>
+        </div>
+
+        <div className="flex gap-4 mb-8">
+          <Select
+            onValueChange={(value) =>
+              handleFilterTypeChange(value as FilterType)
+            }
+            defaultValue="name"
+          >
+            <SelectTrigger className="w-[180px]">
+              <SelectValue placeholder="Filter by" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectGroup>
+                <SelectItem value="name">Name</SelectItem>
+                <SelectItem value="tipo">Type</SelectItem>
+                <SelectItem value="clan">Clan</SelectItem>
+              </SelectGroup>
+            </SelectContent>
+          </Select>
+
+          <Input
+            type="text"
+            placeholder="Type a pokemon name..."
+            value={searchQuery}
+            onChange={handleInputChange}
+            className="flex-1"
+          />
+          <Button variant="outline" className="w-24">
+            Search
+          </Button>
+          <Select
+            onValueChange={(value) =>
+              handleSortOrderChange(value as "asc" | "desc" | "none")
+            }
+            defaultValue="none"
+          >
+            <SelectTrigger className="w-[180px]">
+              <SelectValue placeholder="Sort by balls count" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectGroup>
+                <SelectItem value="none">None</SelectItem>
+                <SelectItem value="asc">Ascending</SelectItem>
+                <SelectItem value="desc">Descending</SelectItem>
+              </SelectGroup>
+            </SelectContent>
+          </Select>
+        </div>
+
+        <div className="mb-8">
+          <Pagination>
+            <PaginationContent>
+              <PaginationItem>
+                <PaginationPrevious
+                  href="#"
+                  onClick={handlePrevPage}
+                  isActive={currentPage === 1}
+                />
+              </PaginationItem>
+
+              <Select
+                onValueChange={handleItemsPerPageChange}
+                defaultValue={itemsPerPage}
+              >
+                <SelectTrigger className="w-[180px]">
+                  <SelectValue placeholder="Items per page" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectGroup>
+                    {["20", "50", "100", "200", "500"].map((option) => (
+                      <SelectItem key={option} value={option}>
+                        {option}
+                      </SelectItem>
+                    ))}
+                  </SelectGroup>
+                </SelectContent>
+              </Select>
+
+              <PaginationItem>
+                <PaginationNext
+                  href="#"
+                  onClick={handleNextPage}
+                  isActive={currentPage === totalPages}
+                />
+              </PaginationItem>
+            </PaginationContent>
+          </Pagination>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {isLoading
+            ? Array.from({ length: 6 }).map((_, index) => (
+                <div key={index} className="border-2 p-4">
+                  <Skeleton className="h-48 w-48 bg-gray-200 mb-4" />
+                  <Skeleton className="h-6 w-3/4 bg-gray-200 mb-2" />
+                  <Skeleton className="h-4 w-1/2 bg-gray-200" />
+                </div>
+              ))
+            : paginatedPokemons?.map((pokemon, index) => (
+                <Card key={index} className="border-2">
+                  <CardHeader>
+                    <div className="text-center m-5">
+                      <IframeModal
+                        pokemon={pokemon.nome}
+                        url={`https://wiki.pokexgames.com/index.php/${pokemon.nome}`}
+                      />
+                    </div>
+                    <CardTitle className="text-center">
+                      {pokemon.nome}
+                      {getMap(pokemon.mapas) === "#" ? (
+                        <></>
+                      ) : (
+                        <Link
+                          target={
+                            getMap(pokemon.mapas) === "#" ? "_self" : "_blank"
+                          }
+                          href={
+                            getMap(pokemon.mapas) === "#"
+                              ? "#"
+                              : `/maps?captions=${getMap(pokemon.mapas)}`
+                          }
+                        >
+                          <MapPin />
+                        </Link>
+                      )}
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent className="flex flex-col items-center">
+                    <div className="relative w-64 h-64 mb-2">
+                      <Image
+                        priority
+                        src={`/images/pokemons/${pokemon.numero}.png`}
+                        alt={pokemon.nome}
+                        fill
+                        className="object-contain"
+                      />
+                    </div>
+                    <div className="flex justify-between w-full px-4">
+                      <p className="text-lg">Level: {pokemon.level}</p>
+                      <p className="text-lg">
+                        Price: {formatPrice(+pokemon.pricenpc)}
+                      </p>
+                    </div>
+                  </CardContent>
+
+                  <CardFooter className="flex flex-col items-start">
+                    <div className="grid grid-cols-3 gap-2 w-full">
+                      {ballTypes?.map((ballType) => (
+                        <div
+                          key={ballType}
+                          className="flex items-center justify-between"
+                        >
+                          <TooltipProvider>
+                            <Tooltip>
+                              <TooltipTrigger>
+                                <div
+                                  className="flex items-center"
+                                  aria-label={ballNames[ballType]}
+                                >
+                                  <Image
+                                    src={`/images/balls/${ballImages[ballType]}`}
+                                    alt={ballNames[ballType]}
+                                    width={32}
+                                    height={32}
+                                    className="object-contain"
+                                  />
+                                  <span className="text-xs">
+                                    {pokemon[ballType]}
+                                  </span>
+                                </div>
+                              </TooltipTrigger>
+                              <TooltipContent>
+                                <p>
+                                  {ballNames[ballType]} - {pokemon[ballType]}
+                                </p>
+                              </TooltipContent>
+                            </Tooltip>
+                          </TooltipProvider>
+                        </div>
+                      ))}
+                    </div>
+                  </CardFooter>
+                </Card>
+              ))}
         </div>
       </div>
-
-      <div className="flex gap-4 mb-8">
-        <Select
-          onValueChange={(value) => handleFilterTypeChange(value as FilterType)}
-          defaultValue="name"
-        >
-          <SelectTrigger className="w-[180px]">
-            <SelectValue placeholder="Filter by" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectGroup>
-              <SelectItem value="name">Name</SelectItem>
-              <SelectItem value="tipo">Type</SelectItem>
-              <SelectItem value="clan">Clan</SelectItem>
-            </SelectGroup>
-          </SelectContent>
-        </Select>
-
-        <Input
-          type="text"
-          placeholder="Type a pokemon name..."
-          value={searchQuery}
-          onChange={handleInputChange}
-          className="flex-1"
-        />
-        <Button variant="outline" className="w-24">
-          Search
-        </Button>
-        <Select
-          onValueChange={(value) =>
-            handleSortOrderChange(value as "asc" | "desc" | "none")
-          }
-          defaultValue="none"
-        >
-          <SelectTrigger className="w-[180px]">
-            <SelectValue placeholder="Sort by balls count" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectGroup>
-              <SelectItem value="none">None</SelectItem>
-              <SelectItem value="asc">Ascending</SelectItem>
-              <SelectItem value="desc">Descending</SelectItem>
-            </SelectGroup>
-          </SelectContent>
-        </Select>
-      </div>
-
-      <div className="mb-8">
-        <Pagination>
-          <PaginationContent>
-            <PaginationItem>
-              <PaginationPrevious
-                href="#"
-                onClick={handlePrevPage}
-                isActive={currentPage === 1}
-              />
-            </PaginationItem>
-
-            <Select
-              onValueChange={handleItemsPerPageChange}
-              defaultValue={itemsPerPage}
-            >
-              <SelectTrigger className="w-[180px]">
-                <SelectValue placeholder="Items per page" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectGroup>
-                  {["20", "50", "100", "200", "500"].map((option) => (
-                    <SelectItem key={option} value={option}>
-                      {option}
-                    </SelectItem>
-                  ))}
-                </SelectGroup>
-              </SelectContent>
-            </Select>
-
-            <PaginationItem>
-              <PaginationNext
-                href="#"
-                onClick={handleNextPage}
-                isActive={currentPage === totalPages}
-              />
-            </PaginationItem>
-          </PaginationContent>
-        </Pagination>
-      </div>
-
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {isLoading
-          ? Array.from({ length: 6 }).map((_, index) => (
-              <div key={index} className="border-2 p-4">
-                <Skeleton className="h-48 w-48 bg-gray-200 mb-4" />
-                <Skeleton className="h-6 w-3/4 bg-gray-200 mb-2" />
-                <Skeleton className="h-4 w-1/2 bg-gray-200" />
-              </div>
-            ))
-          : paginatedPokemons?.map((pokemon, index) => (
-              <Card key={index} className="border-2">
-                <CardHeader>
-                  <div className="text-center m-5">
-                    <IframeModal
-                      pokemon={pokemon.nome}
-                      url={`https://wiki.pokexgames.com/index.php/${pokemon.nome}`}
-                    />
-                  </div>
-                  <CardTitle className="text-center">
-                    {pokemon.nome}
-                    {getMap(pokemon.mapas) === "#" ? (
-                      <></>
-                    ) : (
-                      <Link
-                        target={
-                          getMap(pokemon.mapas) === "#" ? "_self" : "_blank"
-                        }
-                        href={
-                          getMap(pokemon.mapas) === "#"
-                            ? "#"
-                            : `/maps?captions=${getMap(pokemon.mapas)}`
-                        }
-                      >
-                        <MapPin />
-                      </Link>
-                    )}
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="flex flex-col items-center">
-                  <div className="relative w-64 h-64 mb-2">
-                    <Image
-                      priority
-                      src={`/images/pokemons/${pokemon.numero}.png`}
-                      alt={pokemon.nome}
-                      fill
-                      className="object-contain"
-                    />
-                  </div>
-                  <div className="flex justify-between w-full px-4">
-                    <p className="text-lg">Level: {pokemon.level}</p>
-                    <p className="text-lg">
-                      Price: {formatPrice(+pokemon.pricenpc)}
-                    </p>
-                  </div>
-                </CardContent>
-
-                <CardFooter className="flex flex-col items-start">
-                  <div className="grid grid-cols-3 gap-2 w-full">
-                    {ballTypes?.map((ballType) => (
-                      <div
-                        key={ballType}
-                        className="flex items-center justify-between"
-                      >
-                        <TooltipProvider>
-                          <Tooltip>
-                            <TooltipTrigger>
-                              <div
-                                className="flex items-center"
-                                aria-label={ballNames[ballType]}
-                              >
-                                <Image
-                                  src={`/images/balls/${ballImages[ballType]}`}
-                                  alt={ballNames[ballType]}
-                                  width={32}
-                                  height={32}
-                                  className="object-contain"
-                                />
-                                <span className="text-xs">
-                                  {pokemon[ballType]}
-                                </span>
-                              </div>
-                            </TooltipTrigger>
-                            <TooltipContent>
-                              <p>
-                                {ballNames[ballType]} - {pokemon[ballType]}
-                              </p>
-                            </TooltipContent>
-                          </Tooltip>
-                        </TooltipProvider>
-                      </div>
-                    ))}
-                  </div>
-                </CardFooter>
-              </Card>
-            ))}
-      </div>
-    </div>
+    </>
   );
 }
