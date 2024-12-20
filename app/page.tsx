@@ -57,10 +57,14 @@ function useDebounce<T>(value: T, delay: number): T {
   return debouncedValue;
 }
 
+type FilterType = "name" | "tipo" | "clan";
+
 export default function PokemonSearch() {
   const [searchQuery, setSearchQuery] = useState("");
   const [pokemons, setPokemons] = useState<Pokemon[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [sortOrder, setSortOrder] = useState<"asc" | "desc" | "none">("none");
+  const [filterType, setFilterType] = useState<FilterType>("name");
 
   const debouncedSearchQuery = useDebounce(searchQuery, 300);
 
@@ -87,31 +91,79 @@ export default function PokemonSearch() {
   const filteredPokemons = useMemo(() => {
     if (!debouncedSearchQuery.trim()) return pokemons;
 
-    const queryAsNumber = +debouncedSearchQuery;
-    return !Number.isNaN(queryAsNumber)
-      ? pokemons.filter((pokemon) => +pokemon.level === queryAsNumber)
-      : pokemons.filter((pokemon) =>
+    switch (filterType) {
+      case "name":
+        return pokemons.filter((pokemon) =>
           pokemon.nome
             .toLowerCase()
             .includes(debouncedSearchQuery.toLowerCase())
         );
-  }, [debouncedSearchQuery, pokemons]);
+      case "tipo":
+        return pokemons.filter(
+          (pokemon) =>
+            pokemon.tipo1
+              .toLowerCase()
+              .includes(debouncedSearchQuery.toLowerCase()) ||
+            pokemon.tipo2
+              .toLowerCase()
+              .includes(debouncedSearchQuery.toLowerCase())
+        );
+      case "clan":
+        return pokemons.filter(
+          (pokemon) =>
+            pokemon.clan1
+              .toLowerCase()
+              .includes(debouncedSearchQuery.toLowerCase()) ||
+            pokemon.clan2
+              .toLowerCase()
+              .includes(debouncedSearchQuery.toLowerCase())
+        );
+      default:
+        return pokemons;
+    }
+  }, [debouncedSearchQuery, pokemons, filterType]);
+
+  const sortedPokemons = useMemo(() => {
+    if (sortOrder === "none") return filteredPokemons;
+
+    return [...filteredPokemons].sort((a, b) => {
+      const totalBallsA = ballTypes.reduce(
+        (sum, type) => sum + (a[type] || 0),
+        0
+      );
+      const totalBallsB = ballTypes.reduce(
+        (sum, type) => sum + (b[type] || 0),
+        0
+      );
+
+      return sortOrder === "asc"
+        ? totalBallsA - totalBallsB
+        : totalBallsB - totalBallsA;
+    });
+  }, [filteredPokemons, sortOrder]);
 
   const paginatedPokemons = useMemo(() => {
     const startIndex = (currentPage - 1) * Number(itemsPerPage);
     const endIndex = startIndex + Number(itemsPerPage);
-    return filteredPokemons.slice(startIndex, Number(endIndex));
-  }, [filteredPokemons, currentPage, itemsPerPage]);
+    return sortedPokemons.slice(startIndex, endIndex);
+  }, [sortedPokemons, currentPage, itemsPerPage]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchQuery(e.target.value);
     setCurrentPage(1);
   };
 
+  const handleSortOrderChange = (order: "asc" | "desc" | "none") => {
+    setSortOrder(order);
+  };
+
+  const handleFilterTypeChange = (type: FilterType) => {
+    setFilterType(type);
+    setSearchQuery("");
+  };
+
   const handleNextPage = () => {
-    if (
-      currentPage < Math.ceil(filteredPokemons.length / Number(itemsPerPage))
-    ) {
+    if (currentPage < Math.ceil(sortedPokemons.length / Number(itemsPerPage))) {
       setCurrentPage((prevPage) => prevPage + 1);
     }
   };
@@ -127,7 +179,7 @@ export default function PokemonSearch() {
     setCurrentPage(1);
   };
 
-  const totalPages = Math.ceil(filteredPokemons.length / Number(itemsPerPage));
+  const totalPages = Math.ceil(sortedPokemons.length / Number(itemsPerPage));
 
   function getMap(mapas: string) {
     const m = mapas.split(";");
@@ -140,6 +192,10 @@ export default function PokemonSearch() {
       return JSON.stringify({ captions });
     }
     return captions[0] === "#" ? "#" : JSON.stringify({ captions });
+  }
+
+  function formatPrice(price: number) {
+    return `$ ${new Intl.NumberFormat("pt-BR").format(price)}`;
   }
 
   return (
@@ -167,6 +223,22 @@ export default function PokemonSearch() {
       </div>
 
       <div className="flex gap-4 mb-8">
+        <Select
+          onValueChange={(value) => handleFilterTypeChange(value as FilterType)}
+          defaultValue="name"
+        >
+          <SelectTrigger className="w-[180px]">
+            <SelectValue placeholder="Filter by" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectGroup>
+              <SelectItem value="name">Name</SelectItem>
+              <SelectItem value="tipo">Type</SelectItem>
+              <SelectItem value="clan">Clan</SelectItem>
+            </SelectGroup>
+          </SelectContent>
+        </Select>
+
         <Input
           type="text"
           placeholder="Type a pokemon name..."
@@ -177,6 +249,23 @@ export default function PokemonSearch() {
         <Button variant="outline" className="w-24">
           Search
         </Button>
+        <Select
+          onValueChange={(value) =>
+            handleSortOrderChange(value as "asc" | "desc" | "none")
+          }
+          defaultValue="none"
+        >
+          <SelectTrigger className="w-[180px]">
+            <SelectValue placeholder="Sort by balls count" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectGroup>
+              <SelectItem value="none">None</SelectItem>
+              <SelectItem value="asc">Ascending</SelectItem>
+              <SelectItem value="desc">Descending</SelectItem>
+            </SelectGroup>
+          </SelectContent>
+        </Select>
       </div>
 
       <div className="mb-8">
@@ -267,8 +356,14 @@ export default function PokemonSearch() {
                       className="object-contain"
                     />
                   </div>
-                  <p className="text-lg">Level: {pokemon.level}</p>
+                  <div className="flex justify-between w-full px-4">
+                    <p className="text-lg">Level: {pokemon.level}</p>
+                    <p className="text-lg">
+                      Price: {formatPrice(+pokemon.pricenpc)}
+                    </p>
+                  </div>
                 </CardContent>
+
                 <CardFooter className="flex flex-col items-start">
                   <div className="grid grid-cols-3 gap-2 w-full">
                     {ballTypes?.map((ballType) => (
